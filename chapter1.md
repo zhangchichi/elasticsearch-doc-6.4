@@ -6,7 +6,7 @@ elasticsearch有一些核心概念，从一开始就理解这些概念将极大�
 
 #### 近实时（NRT）
 
-elasticsearch是一个近实时的搜索平台。也就是说在index中插入一个document，到能够查询这个document是轻微延迟的（一般在1秒钟以内）。
+elasticsearch是一个近实时的搜索平台。也就是说在index中插入一个document，到这个文档可查询，是存在轻微延迟的（一般在1秒钟以内）。
 
 #### 集群（Cluster）
 
