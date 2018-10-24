@@ -69,12 +69,7 @@ elasticsearch是一个近实时的搜索平台。也就是说在index中插入�
 
 在elsaticsearch中，默认每个索引会被分配5个主索引和1个备份。也就是说如果一个拥有两个节点的集群，每个索引会拥有5个主分片和5个副本分片，一共10个分片。
 
-
-
 **NOTE:**
 
 每个elasticsearch分片都是一个Lucene索引。一个Lucene索引包含的文档数是有限制的，最多包含`2,147,483,519`\(= Integer.MAX\_VALUE - 128\) 。你可以使用[`_cat/shards`](https://www.elastic.co/guide/en/elasticsearch/reference/6.4/cat-shards.html)API来监控分片的大小。
-
-  
-
 
