@@ -10,13 +10,13 @@
 
 #### 描述
 
-在更新用户的过程中，除了`username `和 `password `以外都能修改。要更改用户密码，使用[change password API](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-change-password.html)。
+在更新用户的过程中，除了`username`和 `password`以外都能修改。要更改用户密码，使用[change password API](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-change-password.html)。
 
 有关本机领域（`native realm`）更多的信息，查看[Realms](https://www.elastic.co/guide/en/elastic-stack-overview/6.4/realms.html) 和 [Configuring a native realm](https://www.elastic.co/guide/en/elasticsearch/reference/current/configuring-native-realm.html)。
 
 #### 路径参数
 
-`username `\(必须\)  ：（String）用户标识
+`username`\(必须\)  ：（String）用户标识
 
 **note:**
 
