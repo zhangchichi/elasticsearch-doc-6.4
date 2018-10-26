@@ -16,8 +16,23 @@
     * [创建或修改角色api](x-pack-api/security-api/create-or-update-roles-api.md)
     * [创建或修改用户api](x-pack-api/security-api/create-or-update-user-api.md)
     * [删除应用程序权限api](x-pack-api/security-api/delete-applications-privileges-api.md)
+    * 删除角色映射api
+    * 删除角色api
+    * 删除令牌api
+    * 删除用户api
+    * 禁用用户api
+    * 启用用户api
+    * 获取应用程序权限api
+    * 获取角色映射api
+    * 获取角色api
+    * 获取令牌api
+    * 获取用户api
+    * 是否有权限api
+    * ssl证书api
 * [示例](expamle/README.md)
   * [创建索引](expamle/create-index.md)
   * [创建角色](expamle/create-role.md)
   * [创建用户](expamle/create-user.md)
+
+
 
