@@ -13,4 +13,7 @@
 * [示例](expamle/README.md)
   * [创建索引](expamle/create-index.md)
   * [创建角色](expamle/create-role.md)
+  * 创建用户
+
+
 
