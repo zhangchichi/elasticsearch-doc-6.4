@@ -1,4 +1,4 @@
-建立一个能够读取 test\_index\_1 的角色
+建立一个能够读取，写入 test\_index\_1 的角色
 
 ```
 request:
@@ -13,7 +13,7 @@ Postman-Token: 6c971717-aa46-011d-a523-f4a4da5a2414
   "indices": [
     {
       "names": [ "test_index_1"],
-      "privileges": ["read"]
+      "privileges": ["write"]
     }
   ]
 }
