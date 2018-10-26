@@ -17,20 +17,22 @@
     * [创建或修改用户api](x-pack-api/security-api/create-or-update-user-api.md)
     * [删除应用程序权限api](x-pack-api/security-api/delete-applications-privileges-api.md)
     * [删除角色映射api](x-pack-api/security-api/delete-role-mapping-api.md)
-    * 删除角色api
-    * 删除令牌api
-    * 删除用户api
-    * 禁用用户api
-    * 启用用户api
-    * 获取应用程序权限api
-    * 获取角色映射api
-    * 获取角色api
-    * 获取令牌api
-    * 获取用户api
-    * 是否有权限api
-    * ssl证书api
+    * [删除角色api](/x-pack-api/security-api/delte-roles-api.md)
+    * [删除令牌api](/x-pack-api/security-api/delelte-token-api.md)
+    * [删除用户api](/x-pack-api/security-api/delete-user-api.md)
+    * [禁用用户api](/x-pack-api/security-api/disable-user-api.md)
+    * [启用用户api](/x-pack-api/security-api/enable-user-api.md)
+    * [获取应用程序权限api](/x-pack-api/security-api/get-application-privelges-api.md)
+    * [获取角色映射api](/x-pack-api/security-api/get-roles-mapping-api.md)
+    * [获取角色api](/x-pack-api/security-api/get-roles-api.md)
+    * [获取令牌api](/x-pack-api/security-api/get-token-api.md)
+    * [获取用户api](/x-pack-api/security-api/get-users-api.md)
+    * [是否有权限api](/x-pack-api/security-api/has-privileges-api.md)
+    * [ssl证书api](/x-pack-api/security-api/ssl-certificate-api.md)
 * [示例](expamle/README.md)
   * [创建索引](expamle/create-index.md)
   * [创建角色](expamle/create-role.md)
   * [创建用户](expamle/create-user.md)
+
+
 
