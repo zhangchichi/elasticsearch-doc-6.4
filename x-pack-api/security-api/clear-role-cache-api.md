@@ -21,7 +21,15 @@ name
 
 ### 授权
 
+要使用此API，你必须至少拥有集群 `manage_security`权限
 
+### 样例
+
+清除本地角色缓存，例如，清除 `my_admin_role `的缓存：
+
+```
+POST /_xpack/security/role/my_admin_role/_clear_cache
+```
 
 
 
