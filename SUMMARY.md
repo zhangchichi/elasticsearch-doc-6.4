@@ -33,6 +33,8 @@
 
     * [API用法](/sql-access/sql-jdbc/api-usage.md)
 
+  * [SQL 语言](/sql-access/sql-language.md)
+
 * [X-PACK API](x-pack-api/README.md)
 
   * [安全API](x-pack-api/security-api/README.md)
