@@ -23,7 +23,7 @@
 
   * [安全性](/sql-access/security.md)
 
-  * SQL REST API
+  * [SQL REST API](/sql-access/sql-rest-api.md)
 
 * [X-PACK API](x-pack-api/README.md)
 
