@@ -31,6 +31,8 @@
 
   * [SQL JDBC](/sql-access/sql-jdbc/README.md)
 
+    * [API用法](/sql-access/sql-jdbc/api-usage.md)
+
 * [X-PACK API](x-pack-api/README.md)
 
   * [安全API](x-pack-api/security-api/README.md)
