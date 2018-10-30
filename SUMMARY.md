@@ -25,6 +25,12 @@
 
   * [SQL REST API](/sql-access/sql-rest-api.md)
 
+  * [SQL 翻译API](/sql-access/sql-translate-api.md)
+
+  * [SQL CLI](/sql-access/sql-cli.md)
+
+  * [SQL JDBC](/sql-access/sql-jdbc/README.md)
+
 * [X-PACK API](x-pack-api/README.md)
 
   * [安全API](x-pack-api/security-api/README.md)
