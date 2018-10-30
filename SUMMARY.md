@@ -21,7 +21,7 @@
 
     * [跨SQL和Elasticsearch映射概念](/sql-access/convertions-and-terminology/Mapping-concepts-across-sql-and-elasticsearch.md)
 
-  * 安全
+  * [安全性](/sql-access/security.md)
 
   * SQL REST API
 
