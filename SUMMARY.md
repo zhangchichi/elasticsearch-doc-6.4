@@ -5,6 +5,12 @@
   * [基础概念](getting-started/basic-concept.md)
   * [安装](getting-started/installation.md)
   * [集群探索](getting-started/exploring-your-cluster/exploring-your-cluster.md)
+* [建立ELASTICSEARCH](/set-up-elasticsearc/README.md)
+
+  * [X-PACK设置](/set-up-elasticsearc/x-pack-setting/README.md)
+
+    * [SQL访问设置](/set-up-elasticsearc/x-pack-setting/sql-access-setting.md)
+
 * [X-PACK API](x-pack-api/README.md)
   * [安全API](x-pack-api/security-api/README.md)
     * [创建或修改应用权限api](x-pack-api/security-api/create-or-update-application-privileges-API.md)
