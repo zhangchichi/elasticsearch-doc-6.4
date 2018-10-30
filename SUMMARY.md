@@ -23,8 +23,6 @@
 
   * SQL REST API
 
-  * 
-
 * [X-PACK API](x-pack-api/README.md)
 
   * [安全API](x-pack-api/security-api/README.md)
@@ -52,6 +50,7 @@
     * [ssl证书api](/x-pack-api/security-api/ssl-certificate-api.md)
 
 * [示例](expamle/README.md)
+
   * [创建索引](expamle/create-index.md)
   * [创建角色](expamle/create-role.md)
   * [创建用户](expamle/create-user.md)
