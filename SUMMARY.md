@@ -15,7 +15,7 @@
 
   * [概览](/sql-access/overview.md)
 
-  * SQL入门
+  * [SQL入门](/sql-access/getting-started-with-sql.md)
 
   * 公约和术语
 
