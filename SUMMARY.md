@@ -17,7 +17,9 @@
 
   * [SQL入门](/sql-access/getting-started-with-sql.md)
 
-  * 公约和术语
+  * [公约和术语](/sql-access/convertions-and-terminology/README.md)
+
+    * [跨SQL和Elasticsearch映射概念](/sql-access/convertions-and-terminology/Mapping-concepts-across-sql-and-elasticsearch.md)
 
   * 安全
 
