@@ -11,7 +11,22 @@
 
     * [SQL访问设置](/set-up-elasticsearc/x-pack-setting/sql-access-setting.md)
 
+* [SQL访问](/sql-access/README.md)
+
+  * [概览](/sql-access/overview.md)
+
+  * SQL入门
+
+  * 公约和术语
+
+  * 安全
+
+  * SQL REST API
+
+  * 
+
 * [X-PACK API](x-pack-api/README.md)
+
   * [安全API](x-pack-api/security-api/README.md)
     * [创建或修改应用权限api](x-pack-api/security-api/create-or-update-application-privileges-API.md)
     * [认证api](x-pack-api/security-api/authenticate-api.md)
@@ -35,6 +50,7 @@
     * [获取用户api](/x-pack-api/security-api/get-users-api.md)
     * [是否有权限api](/x-pack-api/security-api/has-privileges-api.md)
     * [ssl证书api](/x-pack-api/security-api/ssl-certificate-api.md)
+
 * [示例](expamle/README.md)
   * [创建索引](expamle/create-index.md)
   * [创建角色](expamle/create-role.md)
