@@ -35,6 +35,14 @@
 
   * [SQL 语言](/sql-access/sql-language.md)
 
+  * [数据类型](/sql-access/data-types.md)
+
+  * [SQL命令](/sql-access/sql-commands/README.md)
+
+  * [方程和操作](/sql-access/functions-and-operators/README.md)
+
+  * [保留关键字](/sql-access/reversed-keywords.md)
+
 * [X-PACK API](x-pack-api/README.md)
 
   * [安全API](x-pack-api/security-api/README.md)
