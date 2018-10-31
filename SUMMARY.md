@@ -39,6 +39,16 @@
 
   * [SQL命令](/sql-access/sql-commands/README.md)
 
+    * [describe table](/sql-access/sql-commands/describe-tables.md)
+
+    * [select](/sql-access/sql-commands/select.md)
+
+    * [show columns](/sql-access/sql-commands/show-columns.md)
+
+    * [show functions](/sql-access/sql-commands/show-functions.md)
+
+    * [show tables](/sql-access/sql-commands/show-tables.md)
+
   * [方程和操作](/sql-access/functions-and-operators/README.md)
 
   * [保留关键字](/sql-access/reversed-keywords.md)
