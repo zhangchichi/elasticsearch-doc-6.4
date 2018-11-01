@@ -221,5 +221,117 @@ M              |6              |13
 
 在SELECT中使用GROUP BY子句时，所有输出表达式必须是聚合函数或用于分组或派生的表达式（否则每个未分组列将返回多个可能的值）。
 
+```
+SELECT gender AS g, COUNT(*) AS c FROM emp GROUP BY gender;
 
+       g       |       c
+---------------+---------------
+F              |37
+M              |63
+```
+
+输出表达式中使用聚合：
+
+```
+SELECT gender AS g, ROUND(MIN(salary) / 100) AS salary FROM emp GROUP BY gender;
+
+       g       |    salary
+---------------+---------------
+F              |260
+M              |253
+
+```
+
+使用多聚合：
+
+```
+SELECT gender AS g, KURTOSIS(salary) AS k, SKEWNESS(salary) AS s FROM emp GROUP BY gender;
+
+       g       |        k         |         s
+---------------+------------------+-------------------
+F              |1.8427808415250482|0.04517149340491813
+M              |2.259327644285826 |0.40268950715550333
+```
+
+### 隐式分组
+
+如果在没有关联的GROUP BY的情况下使用聚合，则会应用隐式分组，这意味着所有选定的行都被视为形成单个默认或隐式组。 因此，查询仅发出一行（因为只有一个组）。
+
+一个常见的例子是计算记录数：
+
+```
+SELECT COUNT(*) AS count FROM emp;
+
+     count
+---------------
+100
+```
+
+当然也适用于多个集合：
+
+```
+SELECT MIN(salary) AS min, MAX(salary) AS max, AVG(salary) AS avg, COUNT(*) AS count FROM emp;
+
+      min      |      max      |      avg      |     count
+---------------+---------------+---------------+---------------
+25324          |74999          |48248          |100
+```
+
+### HAVING
+
+HAVING子句只能用于聚合函数（以及GROUP BY）来过滤保留或不保留的组，并具有以下语法：
+
+```
+GROUP BY condition
+```
+
+```
+condition
+    表示求值为布尔值的表达式。 仅返回与条件匹配的组（为true）。
+```
+
+WHERE和HAVING都用于过滤，但它们之间存在几个显着差异：
+
+1. WHERE适用于各个行，HAVING适用于由\`\`GROUP BY\`\`创建的组
+2. WHERE再分组前执行，HAVING再分组后执行
+
+```
+SELECT languages AS l, COUNT(*) AS c FROM emp GROUP BY l HAVING c BETWEEN 15 AND 20;
+
+       l       |       c
+---------------+---------------
+1              |16
+2              |20
+4              |18
+```
+
+此外，可以在HAVING中使用多个聚合表达式，甚至可以在输出中未使用的表达式（SELECT）：
+
+```
+SELECT MIN(salary) AS min, MAX(salary) AS max, MAX(salary) - MIN(salary) AS diff FROM emp GROUP BY languages HAVING diff - max % min > 0 AND AVG(salary) > 30000;
+
+      min      |      max      |     diff
+---------------+---------------+---------------
+25976          |73717          |47741
+29175          |73578          |44403
+26436          |74999          |48563
+27215          |74572          |47357
+25324          |73851          |48527
+```
+
+### 隐式分组
+
+如上所述，可以有一个没有“GROUP BY”的HAVING子句。 在这种情况下，应用所谓的隐式分组，这意味着所有选定的行都被视为形成一个组，并且HAVING可以应用于此组中指定的任何聚合函数。 \`因此，查询只发出一行（因为只有一个组），HAVING条件返回一行（组）或者如果条件失败则返回零。
+
+在此示例中，HAVING匹配到了数据：
+
+```
+SELECT MIN(salary) AS min, MAX(salary) AS max FROM emp HAVING min > 25000;
+
+      min      |      max
+---------------+---------------
+25324          |74999
+```
+
+### ORDER BY
 
