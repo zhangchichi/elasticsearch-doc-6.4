@@ -239,7 +239,6 @@ SELECT gender AS g, ROUND(MIN(salary) / 100) AS salary FROM emp GROUP BY gender;
 ---------------+---------------
 F              |260
 M              |253
-
 ```
 
 使用多聚合：
@@ -334,4 +333,94 @@ SELECT MIN(salary) AS min, MAX(salary) AS max FROM emp HAVING min > 25000;
 ```
 
 ### ORDER BY
+
+ORDER BY子句用于通过一个或多个表达式对SELECT的结果进行排序：
+
+```
+ORDER BY expression [ ASC | DESC ] [, ...]
+```
+
+```
+expression
+    表示输出列，输入列，或输出列的位置（从1开始）的序号。 
+    另外，可以根据结果得分（score）进行排序。如果没有指定，方向默认为ASC（升序）。 
+    无论指定的顺序如何，null值最后排序。
+```
+
+**重要：**在一起使用时，GROUP BY表达式只能指向用于分组的列。
+
+例如，以下查询按任意输入字段（page\_count）排序：
+
+```
+SELECT * FROM library ORDER BY page_count DESC LIMIT 5;
+
+     author      |        name        |  page_count   |    release_date
+-----------------+--------------------+---------------+--------------------
+Peter F. Hamilton|Pandora's Star      |768            |2004-03-02T00:00:00Z
+Vernor Vinge     |A Fire Upon the Deep|613            |1992-06-01T00:00:00Z
+Frank Herbert    |Dune                |604            |1965-06-01T00:00:00Z
+Alastair Reynolds|Revelation Space    |585            |2000-03-15T00:00:00Z
+James S.A. Corey |Leviathan Wakes     |561            |2011-06-02T00:00:00Z
+```
+
+### 打分排序
+
+在WHERE子句中执行全文查询时，可以根据分数或与给定查询的相关性返回结果。
+
+**备注： 当在WHERE子句中进行多个文本查询时，他们的分数将使用与Elasticsearch的**[**bool查询**](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html)**相同的规则进行组合。**
+
+要根据分数进行排序，请使用指定函数SCORE（）：
+
+```
+SELECT SCORE(), * FROM library WHERE match(name, 'dune') ORDER BY SCORE() DESC;
+
+    SCORE()    |    author     |       name        |  page_count   |    release_date
+---------------+---------------+-------------------+---------------+--------------------
+2.288635       |Frank Herbert  |Dune               |604            |1965-06-01T00:00:00Z
+1.8893257      |Frank Herbert  |Dune Messiah       |331            |1969-10-15T00:00:00Z
+1.6086555      |Frank Herbert  |Children of Dune   |408            |1976-04-21T00:00:00Z
+1.4005898      |Frank Herbert  |God Emperor of Dune|454            |1981-05-28T00:00:00Z
+```
+
+请注意，您可以通过在WHERE子句中使用全文搜索谓词来返回SCORE（）。 即使SCORE（）不用于排序，这也是可能的：
+
+```
+SELECT SCORE(), * FROM library WHERE match(name, 'dune') ORDER BY page_count DESC;
+
+    SCORE()    |    author     |       name        |  page_count   |    release_date
+---------------+---------------+-------------------+---------------+--------------------
+2.288635       |Frank Herbert  |Dune               |604            |1965-06-01T00:00:00Z
+1.4005898      |Frank Herbert  |God Emperor of Dune|454            |1981-05-28T00:00:00Z
+1.6086555      |Frank Herbert  |Children of Dune   |408            |1976-04-21T00:00:00Z
+1.8893257      |Frank Herbert  |Dune Messiah       |331            |1969-10-15T00:00:00Z
+```
+
+**注意：**尝试从非全文查询返回分数将为所有结果返回相同的值，因为所有结果都是相同的。
+
+### LIMIT
+
+LIMIT子句使用以下格式限制返回的行数：
+
+```
+LIMIT ( count | ALL )
+```
+
+```
+count
+    是一个正整数或零，表示返回的最大可能结果数（因为匹配可能少于限制）。 如果指定0，则不返回任何结果。
+ALL     
+    表示没有限制，因此返回所有结果。
+```
+
+返回：
+
+```
+SELECT first_name, last_name, emp_no FROM emp LIMIT 1;
+
+  first_name   |   last_name   |    emp_no
+---------------+---------------+---------------
+Georgi         |Facello        |10001
+```
+
+
 
