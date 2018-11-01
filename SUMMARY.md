@@ -11,6 +11,20 @@
 
     * [SQL访问设置](/set-up-elasticsearc/x-pack-setting/sql-access-setting.md)
 
+* [文档API](/document-api/README.md)
+  * [读取和写入文档](/document-api/reading-and-writing-documents.md)
+  * [索引API](/document-api/index-api.md)
+  * [GET API](/document-api/get-api.md)
+  * [DELETE API](/document-api/delete-api.md)
+  * [Delete by Query API](/document-api/delete-by-query-api.md)
+  * [Update API](/document-api/update-api.md)
+  * [Update by Query API](/document-api/update-by-query-api.md)
+  * [Multi GET API](/document-api/multi-get-api.md)
+  * [Bulk API](/document-api/bulk-api.md)
+  * [Reindex API](/document-api/reindex-api.md)
+  * [术语向量](/document-api/term-vectors.md)
+  * [多术语向量API](/document-api/multi-termverctors-api.md)
+  * [？更新](/document-api/refresh.md)
 * [SQL访问](/sql-access/README.md)
 
   * [概览](/sql-access/overview.md)
