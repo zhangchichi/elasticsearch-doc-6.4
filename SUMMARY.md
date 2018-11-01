@@ -49,7 +49,19 @@
 
     * [show tables](/sql-access/sql-commands/show-tables.md)
 
-  * [方程和操作](/sql-access/functions-and-operators/README.md)
+  * [方程和运算](/sql-access/functions-and-operators/README.md)
+
+    * [比较运算](/sql-access/functions-and-operators/comparsion-operators.md)
+
+    * [逻辑运算](/sql-access/functions-and-operators/logical-operators.md)
+
+    * [数学运算](/sql-access/functions-and-operators/math-operators.md)
+
+    * [数学方程](/sql-access/functions-and-operators/math-functions.md)
+
+    * [日期和时间方程](/sql-access/functions-and-operators/date-and-time-functions.md)
+
+    * [聚合方程](/sql-access/functions-and-operators/aggregate-functions.md)
 
   * [保留关键字](/sql-access/reversed-keywords.md)
 
