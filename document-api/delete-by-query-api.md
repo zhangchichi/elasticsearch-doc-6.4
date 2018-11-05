@@ -241,5 +241,110 @@ POST _tasks/r1A2WoRbTwKZ516z6NEs5A:36619/_cancel
 POST _delete_by_query/r1A2WoRbTwKZ516z6NEs5A:36619/_rethrottle?requests_per_second=-1
 ```
 
+就像在\_delete\_by\_query API上设置它时，requests\_per\_second可以是-1来禁用限制或任何十进制数字如1.7或12来限制到该级别。 加速查询的Rethrottling会立即生效，但是在完成当前批处理后，重新启动会降低查询速度。 这可以防止滚动超时。
+
+### 切片
+
+逐个查询支持切片滚动以并行化删除过程。 这种并行化可以提高效率，并提供一种方便的方法将请求分解为更小的部分。
+
+### 手动切片
+
+通过为每个请求提供切片ID和切片总数，手动切片查询：
+
+```
+POST twitter/_delete_by_query
+{
+  "slice": {
+    "id": 0,
+    "max": 2
+  },
+  "query": {
+    "range": {
+      "likes": {
+        "lt": 10
+      }
+    }
+  }
+}
+POST twitter/_delete_by_query
+{
+  "slice": {
+    "id": 1,
+    "max": 2
+  },
+  "query": {
+    "range": {
+      "likes": {
+        "lt": 10
+      }
+    }
+  }
+}
+```
+
+您可以验证哪些适用：
+
+```
+GET _refresh
+POST twitter/_search?size=0&filter_path=hits.total
+{
+  "query": {
+    "range": {
+      "likes": {
+        "lt": 10
+      }
+    }
+  }
+}
+```
+
+这导致像这样一个合理的总数：
+
+```
+{
+  "hits": {
+    "total": 0
+  }
+}
+```
+
+### 自动分片：
+
+您还可以使用“切片滚动”自动并行查询，以便在\_uid上进行切片。 使用`slices`指定要使用的切片数：
+
+```
+POST twitter/_delete_by_query?refresh&slices=5
+{
+  "query": {
+    "range": {
+      "likes": {
+        "lt": 10
+      }
+    }
+  }
+}
+```
+
+您还可以验证以下内容：
+
+```
+POST twitter/_search?size=0&filter_path=hits.total
+{
+  "query": {
+    "range": {
+      "likes": {
+        "lt": 10
+      }
+    }
+  }
+}
+```
+
+这导致像这样一个合理的总数：
+
+```
+
+```
+
 
 
