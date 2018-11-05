@@ -80,7 +80,7 @@ POST twitter/_delete_by_query?routing=1
 }
 ```
 
-默认情况下，\_delete\_by\_query使用1000的滚动批次。您可以使用`scroll_size `URL参数更改批量大小：
+默认情况下，\_delete\_by\_query使用1000的滚动批次。您可以使用`scroll_size`URL参数更改批量大小：
 
 ```
 POST twitter/_delete_by_query?scroll_size=5000
@@ -91,6 +91,154 @@ POST twitter/_delete_by_query?scroll_size=5000
     }
   }
 }
+```
+
+### URL参数
+
+除了像`pretty`这样的标准参数之外，Delete By Query API还支持`refresh`，`wait_for_completion`，`wait_for_active_shards`，`timeout`和`scroll`。
+
+发送`refresh`将刷新请求完成后按查询删除所涉及的所有分片。 这与Delete API的refresh参数不同，后者只会刷新收到删除请求的分片。
+
+如果请求包含`wait_for_completion = false`，则Elasticsearch将执行一些预检检查，启动请求，然后返回可与Tasks API一起使用的任务，以取消或获取任务的状态。 Elasticsearch还将在`.tasks / task / $ {taskId}`中创建此任务的记录作为文档。 这是你的保留或删除你认为合适。 完成后，删除它，以便Elasticsearch可以回收它使用的空间。
+
+`wait_for_active_shards`控制在继续请求之前必须激活碎片的副本数。 详情请见此处。 `timeout`指示每个写入请求等待不可用分片变为可用的时间。 两者都完全适用于Bulk API中的工作方式。 如果`_delete_by_query`使用滚动搜索，您还可以指定scroll参数来控制“搜索上下文”保持活动的时间，例如？`scroll = 10m`，默认情况下为5分钟。
+
+`requests_per_second`可以设置为任何正十进制数（1.4,6,1000等）和限制速率，在此速率下，`_delete_by_query`通过用等待时间填充每个批次来发出批量删除操作。 可以通过将`requests_per_second`设置为-1来禁用限制。
+
+通过在批处理之间等待来完成限制，以便\_delete\_by\_query在内部使用的滚动可以被赋予考虑填充的超时。 填充时间是批量大小除以requests\_per\_second和写入时间之间的差异。 默认情况下，批处理大小为1000，因此如果requests\_per\_second设置为500：
+
+```
+target_time = 1000 / 500 per second = 2 seconds
+wait_time = target_time - write_time = 2 seconds - .5 seconds = 1.5 seconds
+```
+
+由于批处理是作为单个\_bulk请求发出的，因此批量数太大将导致Elasticsearch创建许多请求，然后等待一段时间再开始下一个集合。 这是“突发”而不是“平滑”。 默认值为-1。
+
+### 返回主体（response body）
+
+```
+{
+  "took" : 147,
+  "timed_out": false,
+  "total": 119,
+  "deleted": 119,
+  "batches": 1,
+  "version_conflicts": 0,
+  "noops": 0,
+  "retries": {
+    "bulk": 0,
+    "search": 0
+  },
+  "throttled_millis": 0,
+  "requests_per_second": -1.0,
+  "throttled_until_millis": 0,
+  "failures" : [ ]
+}
+```
+
+```
+took    
+    操作从开始到结束花费的毫秒数
+time_out
+    如果在查询执行删除期间执行的任何请求超时，则此标志设置为true。
+total
+    成功处理的文档数量
+deleted
+    成功删除的文档数量
+batches
+    通过查询删除拉回的滚动响应数。
+version_conflicts
+    按查询删除的版本冲突数。
+noops
+    对于按查询删除，此字段始终等于零。 它只存在，以便通过查询删除，按查询更新和reindex API返回具有相同结构的响应。
+retries
+    通过查询删除尝试的重试次数。 bulk是重试的批量操作数，search是重试的搜索操作数。
+throttled_millis
+    请求睡眠以符合requests_per_second的毫秒数。
+requests_per_second
+    在通过查询删除期间有效执行的每秒请求数。
+throttled_until_millis
+    在_delete_by_query响应中，此字段应始终等于零。 它只在使用Task API时有意义，它指示下一次（自纪元以来的毫秒），将再次执行受限制的请求以符合requests_per_second。
+failures
+    如果在此过程中存在任何不可恢复的错误，则会出现故障数组。 如果这是非空的，那么请求因为那些失败而中止。 逐个查询是使用批处理实现的，任何故障都会导致整个进程中止，但当前批处理中的所有故障都会被收集到数组中。 您可以使用conflict选项来防止reindex在版本冲突中中止。
+```
+
+### 使用TASK API
+
+您可以使用Task API获取任何正在运行的delete-by-query 请求的状态：
+
+```
+GET _tasks?detailed=true&actions=*/delete/byquery
+```
+
+回复：
+
+```
+{
+  "nodes" : {
+    "r1A2WoRbTwKZ516z6NEs5A" : {
+      "name" : "r1A2WoR",
+      "transport_address" : "127.0.0.1:9300",
+      "host" : "127.0.0.1",
+      "ip" : "127.0.0.1:9300",
+      "attributes" : {
+        "testattr" : "test",
+        "portsfile" : "true"
+      },
+      "tasks" : {
+        "r1A2WoRbTwKZ516z6NEs5A:36619" : {
+          "node" : "r1A2WoRbTwKZ516z6NEs5A",
+          "id" : 36619,
+          "type" : "transport",
+          "action" : "indices:data/write/delete/byquery",
+          "status" : {                                                  //1
+            "total" : 6154,
+            "updated" : 0,
+            "created" : 0,
+            "deleted" : 3500,
+            "batches" : 36,
+            "version_conflicts" : 0,
+            "noops" : 0,
+            "retries": 0,
+            "throttled_millis": 0
+          },
+          "description" : ""
+        }
+      }
+    }
+  }
+}
+
+1.该对象包含实际状态。 它就像响应json一样，是全局的重要补充。 total是reindex期望执行的操作总数。 您可以通过
+  updated, created, deleted字段来估计进度。 当它们的总和等于总字段时，请求将结束。
+```
+
+使用taskid可以直接查看：
+
+```
+GET /_tasks/r1A2WoRbTwKZ516z6NEs5A:36619
+```
+
+此API的优点是它与`wait_for_completion = false`集成，以透明地返回已完成任务的状态。 如果任务完成并且在其上设置了`wait_for_completion = false`，那么它将返回结果或错误字段。 此功能的成本是wait\_for\_completion = false在`.tasks / task / $ {taskId}`创建的文档。 您可以删除该文档。
+
+### 使用取消 TASK API
+
+所有 delete by query API 可以使用它取消任务：
+
+```
+POST _tasks/r1A2WoRbTwKZ516z6NEs5A:36619/_cancel
+```
+
+可以使用任务API找到任务ID。
+
+取消应该很快发生，但可能需要几秒钟。 上面的任务状态API将继续列出任务，直到它被唤醒以取消自身。
+
+### 更新限制
+
+可以使用\_rethrottle API通过查询在正在运行的删除时更改`requests_per_second`的值：
+
+```
+POST _delete_by_query/r1A2WoRbTwKZ516z6NEs5A:36619/_rethrottle?requests_per_second=-1
 ```
 
 
