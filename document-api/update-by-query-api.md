@@ -103,7 +103,7 @@ POST twitter,blog/_doc,post/_update_by_query
 POST twitter/_update_by_query?routing=1
 ```
 
-默认情况下`_update_by_query`使用1000的滚动批次。您可以使用`scroll_size `URL参数更改批量大小：
+默认情况下`_update_by_query`使用1000的滚动批次。您可以使用`scroll_size`URL参数更改批量大小：
 
 ```
 POST twitter/_update_by_query?scroll_size=100
@@ -359,6 +359,117 @@ POST twitter/_search?size=0&q=extra:test&filter_path=hits.total
 将`slices`设置为`auto`将允许Elasticsearch选择要使用的切片数。 此设置将使用每个分片一个切片，达到一定限制。 如果有多个源索引，它将根据具有最小分片数的索引选择切片数。
 
 向\_update\_by\_query添加切片只会自动执行上一节中使用的手动过程，创建子请求，这意味着它有一些怪癖：
+
+* 您可以在Tasks API中查看这些请求。 这些子请求是具有切片的请求的任务的“子”任务。
+* 使用切片获取请求的任务状态仅包含已完成切片的状态。
+* 这些子请求可单独寻址，例如取消和重新限制。
+* 使用`slice`限制请求将按比例重新调整未完成的子请求。
+* 使用`slice`取消请求将取消每个子请求。
+* 由于`slice`的性质，每个子请求都不会获得完全均匀的文档分布。 所有文档被处理，但某些切片可能比其他分片更大。 期望更大的切片具有更均匀的分布。
+* 在带有切片的请求中像slice\_per\_secon和size这样的参数会按比例分配给每个子请求。 结合上面关于分布不均匀的点，您应该得出结论，使用切片的大小可能会导致在`_update_by_query ed`中不确切的文档数。
+* 每个子请求获得source索引略有不同的快照，尽管这些都是在大约相同的时间进行的。
+
+### 选择分片数
+
+如果自动切片，将切片设置为自动将为大多数索引选择合理的数字。 如果您手动切片或以其他方式调整自动切片，请使用这些指南。
+
+当切片数等于索引中的分片数时，查询性能最有效。 如果该数字很大（例如，500），则选择较小的数字，因为太多的切片会损害性能。 设置高于分片数量的片通常不会提高效率并增加开销。
+
+更新性能在可用资源上以切片数量线性扩展。
+
+查询或更新性能是否主导运行时取决于重新编制索引的文档和群集资源。
+
+### 获取新的属性
+
+你创建了一个没有动态映射的索引，用数据填充它，然后添加一个映射值来从数据中获取更多字段：
+
+```
+PUT test
+{
+  "mappings": {
+    "_doc": {
+      "dynamic": false,                                //1
+      "properties": {
+        "text": {"type": "text"}
+      }
+    }
+  }
+}
+
+POST test/_doc?refresh
+{
+  "text": "words words",
+  "flag": "bar"
+}
+POST test/_doc?refresh
+{
+  "text": "words words",
+  "flag": "foo"
+}
+PUT test/_mapping/_doc                                 //2
+{
+  "properties": {
+    "text": {"type": "text"},
+    "flag": {"type": "text", "analyzer": "keyword"}
+  }
+}
+
+1.这就是说新的字段不会被index,只是被存储到source中
+2.这会更新映射以添加新标志字段。 要获取新字段，您必须使用它重新索引所有文档。
+```
+
+搜索数据将找不到任何内容：
+
+```
+POST test/_search?filter_path=hits.total
+{
+  "query": {
+    "match": {
+      "flag": "foo"
+    }
+  }
+}
+```
+
+```
+{
+  "hits" : {
+    "total" : 0
+  }
+}
+```
+
+但是您可以发出\_update\_by\_query请求来获取新映射：
+
+```
+POST test/_update_by_query?refresh&conflicts=proceed
+POST test/_search?filter_path=hits.total
+{
+  "query": {
+    "match": {
+      "flag": "foo"
+    }
+  }
+}
+```
+
+```
+{
+  "hits" : {
+    "total" : 1
+  }
+}
+```
+
+将字段添加到多字段时，您可以执行完全相同的操作。
+
+
+
+
+
+
+
+
 
 
 
