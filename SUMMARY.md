@@ -24,7 +24,7 @@
   * [Bulk API](/document-api/bulk-api.md)
   * [Reindex API](/document-api/reindex-api.md)
   * [Term Vectors](/document-api/term-vectors.md)
-  * [多术语向量API](/document-api/multi-termverctors-api.md)
+  * [Multi termvectors API](/document-api/multi-termverctors-api.md)
   * [？更新](/document-api/refresh.md)
 
 * [SQL访问](/sql-access/README.md)
