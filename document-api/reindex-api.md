@@ -507,7 +507,57 @@ GET test2/_doc/1
 
 ### 分片
 
+Reindex支持[Sliced Scroll](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html#sliced-scroll)以并行化重建索引过程。 这种并行化可以提高效率，并提供一种方便的方法将请求分解为更小的部分。
 
+#### 手动分片
+
+通过为每个请求提供切片ID和切片总数，手动切片reindex请求：
+
+```
+POST _reindex
+{
+  "source": {
+    "index": "twitter",
+    "slice": {
+      "id": 0,
+      "max": 2
+    }
+  },
+  "dest": {
+    "index": "new_twitter"
+  }
+}
+POST _reindex
+{
+  "source": {
+    "index": "twitter",
+    "slice": {
+      "id": 1,
+      "max": 2
+    }
+  },
+  "dest": {
+    "index": "new_twitter"
+  }
+}
+```
+
+验证：
+
+```
+GET _refresh
+POST new_twitter/_search?size=0&filter_path=hits.total
+```
+
+合理的total返回：
+
+```
+{
+  "hits": {
+    "total": 120
+  }
+}
+```
 
 
 
