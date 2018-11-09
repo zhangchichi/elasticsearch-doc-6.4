@@ -559,5 +559,126 @@ POST new_twitter/_search?size=0&filter_path=hits.total
 }
 ```
 
+### 自动分片
+
+您还可以让\_reindex使用切片滚动自动并行化以在\_uid上切片。 使用切片指定要使用的切片数：
+
+```
+POST _reindex?slices=5&refresh
+{
+  "source": {
+    "index": "twitter"
+  },
+  "dest": {
+    "index": "new_twitter"
+  }
+}
+```
+
+验证：
+
+```
+POST new_twitter/_search?size=0&filter_path=hits.total
+```
+
+合理的total返回：
+
+```
+{
+  "hits": {
+    "total": 120
+  }
+}
+```
+
+详情参见[此处](//document-api/update-by-query-api.md)
+
+### Reindex多索引
+
+如果你有很多索引要重新索引，通常最好一次重新索引它们，而不是使用glob模式来获取许多索引。 这样，如果有任何错误，您可以通过删除部分完成的索引并从该索引重新开始来恢复该过程。 它还使得流程的并行化非常简单：将索引列表拆分为reindex并并行运行每个列表。
+
+一个似乎很适合的bash脚本：
+
+```
+for index in i1 i2 i3 i4 i5; do
+  curl -HContent-Type:application/json -XPOST localhost:9200/_reindex?pretty -d'{
+    "source": {
+      "index": "'$index'"
+    },
+    "dest": {
+      "index": "'$index'-reindexed"
+    }
+  }'
+done
+```
+
+### Reindex日常索引
+
+尽管有上述建议，您可以将`_reindex`与[Painless](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-painless.html)结合使用以重新索引每日索引，以将新模板应用于现有文档。
+
+假设您有包含以下文档的索引：
+
+```
+PUT metricbeat-2016.05.30/_doc/1?refresh
+{"system.cpu.idle.pct": 0.908}
+PUT metricbeat-2016.05.31/_doc/1?refresh
+{"system.cpu.idle.pct": 0.105}
+```
+
+metricbement- \*索引的新模板已加载到Elasticsearch中，但它仅适用于新创建的索引。[Painless](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-painless.html)可用于重新索引现有文档并应用新模板。
+
+下面的脚本从索引名称中提取日期，并创建一个附加了-1的新索引。 来自metricbeat-2016.05.31的所有数据将重新编入metricbeat-2016.05.31-1。
+
+```
+POST _reindex
+{
+  "source": {
+    "index": "metricbeat-*"
+  },
+  "dest": {
+    "index": "metricbeat"
+  },
+  "script": {
+    "lang": "painless",
+    "source": "ctx._index = 'metricbeat-' + (ctx._index.substring('metricbeat-'.length(), ctx._index.length())) + '-1'"
+  }
+}
+```
+
+现在可以在\* -1索引中找到以前的metricbeat索引中的所有文档。
+
+```
+GET metricbeat-2016.05.30-1/_doc/1
+GET metricbeat-2016.05.31-1/_doc/1
+```
+
+之前的方法也可以与更改字段名称一起使用，以仅将现有数据加载到新索引中，并在需要时重命名任何字段。
+
+### 随机提取索引子集
+
+\_reindex可用于提取索引的随机子集以进行测试：
+
+```
+POST _reindex
+{
+  "size": 10,
+  "source": {
+    "index": "twitter",
+    "query": {
+      "function_score" : {
+        "query" : { "match_all": {} },
+        "random_score" : {}
+      }
+    },
+    "sort": "_score"          // 1
+  },
+  "dest": {
+    "index": "random_twitter"
+  }
+}
+
+1. _reindex默认按_doc排序，因此除非您将排序重写为_score，否则random_score不会产生任何影响。
+```
+
 
 
